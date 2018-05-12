@@ -44,4 +44,12 @@ func main()  {
 		s3, len(s3), cap(s3))
 	fmt.Printf("s4=%v, len(s4)=%d, cap(s4)=%d\n",
 		s4, len(s4), cap(s4))
+
+	s5 := append(s4, 10)
+	s6 := append(s5, 11)
+	s7 := append(s6, 12)
+	// 往cap里面替换. 超过cap 系统就会分配一个更大的底层数组.所以必要变量来接受返回值
+	fmt.Println("s5, s6, s7 =", s5, s6, s7)
+	// s6 s7 不再是 arr 的 view了  是更大的底层的view
+	fmt.Println("arr = ", arr)
 }
