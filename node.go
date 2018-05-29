@@ -7,15 +7,22 @@ type treeNode struct {
 	left, right *treeNode
 }
 
-// 给结构定义方法
+// 给 结构 定义 方法 !!!!!  也就是说 print setValue 是属于 treeNode的
 // go 所有的参数都是传值的
+// treeNode 类型的参数 abc，这个 abc 就称作接收者  相当于this self
 func (abc treeNode) print()  {
 // print 给 abc 接收的.
-	fmt.Print(abc.value)
+	fmt.Print(abc.value, " ")
 }
 
 func (aaa *treeNode) setValue(value int)  {
 	// 即使是 指针  调用方式 还是 .
+	// nil指针也可以调用方法
+	if aaa == nil {
+		fmt.Println("Setting value to nil" +
+			"node. Ignored")
+		return
+	}
 	aaa.value = value
 }
 
@@ -63,4 +70,18 @@ func main()  {
 	// 不管是值, 指针 传递. 都可以用值(root) 来调用的
 	root.print()
 	root.setValue(100)
+
+	pRoot := & root
+	// 这个是值接收者 拷贝了一个pRoot
+	pRoot.print()
+	// 这个是指针接收者
+	pRoot.setValue(200)
+	pRoot.print()
+
+	// 定义一个 nil类型的*treeNode tRoot
+	var tRoot *treeNode
+	tRoot.setValue(200)
+	tRoot = &root
+	tRoot.setValue(300)
+	tRoot.print()
 }
