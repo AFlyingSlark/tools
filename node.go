@@ -10,11 +10,13 @@ type treeNode struct {
 // 给 结构 定义 方法 !!!!!  也就是说 print setValue 是属于 treeNode的
 // go 所有的参数都是传值的
 // treeNode 类型的参数 abc，这个 abc 就称作接收者  相当于this self
+// 值接收者  是 拷贝
 func (abc treeNode) print()  {
 // print 给 abc 接收的.
 	fmt.Print(abc.value, " ")
 }
 
+// 要改变内容必须使用指针接收者  (结构 过大  最好也考虑使用指针接收者. 因为值接收者是拷贝)
 func (aaa *treeNode) setValue(value int)  {
 	// 即使是 指针  调用方式 还是 .
 	// nil指针也可以调用方法
@@ -24,6 +26,16 @@ func (aaa *treeNode) setValue(value int)  {
 		return
 	}
 	aaa.value = value
+}
+
+func (bbb *treeNode) traverse()  {
+	if bbb == nil {
+		return
+	}
+	// 左中左遍历方式
+	bbb.left.traverse()	 // recursive call 递归调用
+	bbb.print()
+	bbb.right.traverse()
 }
 
 // go 没有构造函数. 但可以用工厂函数代替
@@ -66,6 +78,11 @@ func main()  {
 	root.right.left.setValue(4)
 	// 还是 0 改不掉 因为是 值传递. 所以添加 * 把指针传进来
 	root.right.left.print()
+
+	// 遍历.
+	fmt.Println("\n stat print array")
+	root.traverse()
+	fmt.Println("\n end print array")
 
 	// 不管是值, 指针 传递. 都可以用值(root) 来调用的
 	root.print()
