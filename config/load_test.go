@@ -26,8 +26,17 @@ func Test_getDefaultFilePath(t *testing.T) {
 }
 
 func Test_readConfFile(t *testing.T) {
-	result, err := readConfFile("", "")
+	result, err := readConfFile("test", "conf")
 
 	t.Log(result)
 	require.NoError(t, err, "文件否存在")
+}
+
+func Test_LoadConfing(t *testing.T) {
+	conf := &struct{}{}
+
+	err := LoadConfing(conf, "", "")
+
+	t.Log(conf)
+	require.NoError(t, err, "加载配置文件")
 }

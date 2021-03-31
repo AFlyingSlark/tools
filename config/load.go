@@ -38,9 +38,42 @@ func LoadConfing(conf interface{}, dir, fileName string) error {
 		return err
 	}
 
-	if dir == "" {
-		// 使用默认配置
-		return nil
+	var (
+		filePath string
+		err      error
+		v        *viper.Viper
+	)
+
+	switch {
+	case dir != "":
+		filePath, err = existFilePath(dir)
+		if err != nil {
+			filePath, err = getDefaultFilePath()
+			if err != nil {
+				break
+			}
+		}
+
+		v, err = readConfFile(filePath, fileName)
+
+	case dir == "":
+		filePath, err = getDefaultFilePath()
+		if err != nil {
+			break
+		}
+
+		v, err = readConfFile(filePath, fileName)
+
+	default:
+		return errors.New("加载配置文件异常")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if err := v.Unmarshal(conf); err != nil {
+		return err
 	}
 
 	return nil
@@ -49,11 +82,57 @@ func LoadConfing(conf interface{}, dir, fileName string) error {
 // 读取配置文件
 func readConfFile(dir, fileName string) (*viper.Viper, error) {
 	v := viper.New()
-	// if fileName != "" {
-	// 	// 有后缀去掉
-	// }
+
+	if fileName == "" {
+		fs, err := os.ReadDir(dir)
+		if err != nil {
+			return nil, fmt.Errorf("配置文件目录异常:%s", dir)
+		}
+
+		// 不进行递归目录查询
+		for _, f := range fs {
+			if f.IsDir() {
+				continue
+			} else {
+				for _, value := range configNames {
+					if f.Name() == value {
+						// 仅读取匹配默认的第一个
+						fileName = f.Name()
+						break
+					}
+				}
+			}
+		}
+
+		if fileName == "" {
+			return nil, fmt.Errorf("未找到默认配置文件的任意一个:%v,请指定配置文件", configNames)
+		}
+	}
+
+	name := removeFileSuffix(fileName)
+
+	v.SetConfigName(name)
+	// 可多目录
+	v.AddConfigPath(dir)
+
+	if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("读取[%s]文件失败,原因:%s", fileName, err.Error())
+	}
 
 	return v, nil
+}
+
+func removeFileSuffix(fileName string) string {
+	name := fileName
+	// 有后缀去掉
+	ext := filepath.Ext(fileName)
+	if ext != "" {
+		fb := filepath.Base(fileName)
+
+		name = fb[0 : len(fb)-len(ext)]
+	}
+
+	return name
 }
 
 /** existFilePath 指定路径是否存在
@@ -64,20 +143,7 @@ func readConfFile(dir, fileName string) (*viper.Viper, error) {
   *       error   error
 */
 func existFilePath(dir string) (string, error) {
-	// 是否为绝对路径
-	fp, err := func(dir string) (string, error) {
-		if !filepath.IsAbs(dir) {
-			fp, err := filepath.Abs(dir)
-			if err != nil {
-				return "", errors.New("获取系统路径失败,构建绝对路径失败")
-			}
-
-			return fp, nil
-		}
-
-		return dir, nil
-	}(dir)
-
+	fp, err := absolutePath(dir)
 	if err != nil {
 		return "", err
 	}
@@ -92,6 +158,20 @@ func existFilePath(dir string) (string, error) {
 	}
 
 	return fp, nil
+}
+
+// absolutePath 构建绝对路径
+func absolutePath(dir string) (string, error) {
+	if !filepath.IsAbs(dir) {
+		fp, err := filepath.Abs(dir)
+		if err != nil {
+			return "", errors.New("获取系统路径失败,构建绝对路径失败")
+		}
+
+		return fp, nil
+	}
+
+	return dir, nil
 }
 
 // getDefaultFilePath 获取默认路径 依次判定: config -> conf -> data
