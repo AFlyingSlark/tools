@@ -79,7 +79,7 @@ func LoadConfing(conf interface{}, dir, fileName string) error {
 	return nil
 }
 
-// 读取配置文件
+// readConfFile 读取配置文件
 func readConfFile(dir, fileName string) (*viper.Viper, error) {
 	v := viper.New()
 
@@ -123,6 +123,7 @@ func readConfFile(dir, fileName string) (*viper.Viper, error) {
 	return v, nil
 }
 
+// removeFileSuffix 去除文件名后缀
 func removeFileSuffix(fileName string) string {
 	name := fileName
 	// 有后缀去掉
@@ -189,7 +190,7 @@ func getDefaultFilePath() (string, error) {
 	return "", fmt.Errorf("未找到符合的默认目录 %v", configDir)
 }
 
-// 对象不为空,且非空指针
+// mustNotNilPtr 解析对象不为空,且非空指针
 func mustNotNilPtr(conf interface{}) error {
 	if reflect.TypeOf(conf).Kind() != reflect.Ptr {
 		return errors.New("conf参数必须是指针")

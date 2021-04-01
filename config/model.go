@@ -15,6 +15,7 @@ type HTTP struct {
 	PprofPort uint `json:"pprofPort"` // pprof端口
 }
 
+// EchoTmpl 输出模版
 func EchoTmpl(tmpl interface{}) (string, error) {
 	f := fuzz.New()
 
