@@ -54,23 +54,29 @@ func Test_allLoadConfig(t *testing.T) {
 			title:     "指定路径.指定文件",
 			dir:       "./test",
 			fileName:  "conf",
-			expectErr: true,
+			expectErr: false,
 		},
 		{
 			title:     "指定路径.默认文件",
 			dir:       "./conf",
 			fileName:  "",
-			expectErr: true,
+			expectErr: false,
 		},
 		{
 			title:     "默认路径.指定文件",
 			dir:       "",
 			fileName:  "custom",
-			expectErr: true,
+			expectErr: false,
 		},
 		{
 			title:     "默认路径.默认文件",
 			dir:       "",
+			fileName:  "",
+			expectErr: false,
+		},
+		{
+			title:     "指定错误路径.默认文件",
+			dir:       "/nothing",
 			fileName:  "",
 			expectErr: true,
 		},
@@ -82,6 +88,11 @@ func Test_allLoadConfig(t *testing.T) {
 
 		err := LoadConfing(conf, value.dir, value.fileName)
 
-		require.NoError(t, err, value.title)
+		if value.expectErr {
+			require.Error(t, err, value.title)
+		} else {
+			require.NoError(t, err, value.title)
+			t.Logf("通过 %s", value.title)
+		}
 	}
 }
