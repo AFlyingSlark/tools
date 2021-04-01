@@ -40,3 +40,48 @@ func Test_LoadConfing(t *testing.T) {
 	t.Log(conf)
 	require.NoError(t, err, "加载配置文件")
 }
+
+func Test_allLoadConfig(t *testing.T) {
+	type loadData struct {
+		title     string
+		dir       string
+		fileName  string
+		expectErr bool
+	}
+
+	arguments := []loadData{
+		{
+			title:     "指定路径.指定文件",
+			dir:       "./test",
+			fileName:  "conf",
+			expectErr: true,
+		},
+		{
+			title:     "指定路径.默认文件",
+			dir:       "./conf",
+			fileName:  "",
+			expectErr: true,
+		},
+		{
+			title:     "默认路径.指定文件",
+			dir:       "",
+			fileName:  "custom",
+			expectErr: true,
+		},
+		{
+			title:     "默认路径.默认文件",
+			dir:       "",
+			fileName:  "",
+			expectErr: true,
+		},
+	}
+
+	conf := &struct{}{}
+
+	for _, value := range arguments {
+
+		err := LoadConfing(conf, value.dir, value.fileName)
+
+		require.NoError(t, err, value.title)
+	}
+}

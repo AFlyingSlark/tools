@@ -95,7 +95,8 @@ func readConfFile(dir, fileName string) (*viper.Viper, error) {
 				continue
 			} else {
 				for _, value := range configNames {
-					if f.Name() == value {
+					name := removeFileSuffix(f.Name())
+					if name == value {
 						// 仅读取匹配默认的第一个
 						fileName = f.Name()
 						break
