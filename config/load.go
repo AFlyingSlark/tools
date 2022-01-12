@@ -28,8 +28,8 @@ var (
 /** LoadConfing 加载解析配置
   参数:
   *       conf            interface{}	反序列化对象,必须为非空指针
-  *       dir             string     	配置文件目录
-  *       fileName        string     	配置文件名
+  *       dir             string     	配置文件目录(空串就依次查询默认.直到符合为止)
+  *       fileName        string     	配置文件名(空串就依次查询默认.直到符合为止)
   返回值:
   *       error   error
 */
