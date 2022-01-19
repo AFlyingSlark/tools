@@ -1,4 +1,4 @@
-package tools
+package times
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ var (
 const (
 	defaultLayout = "2006-01-02 15:04:05"
 
-	locationFilePath = "tools/localtime"
+	locationFilePath = "time/localtime"
 )
 
 var (
