@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-toolkit/slog"
-	"github.com/go-toolkit/utils/implement"
+	"github.com/go-toolkit/utils"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -50,7 +50,7 @@ func TestRetry(t *testing.T) {
 func TestRetryAllTheTime(t *testing.T) {
 	times := 0
 
-	implement.EnsureGo(logger, func() {
+	utils.EnsureGo(logger, func() {
 		require.NoError(t, RetryAllTheTime(time.Millisecond*100, logger, func() error {
 			times++
 			t.Log(times)

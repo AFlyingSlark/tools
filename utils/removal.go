@@ -1,4 +1,4 @@
-package duplicate
+package utils
 
 // slice去除重复数据
 func RemoveRespSlice(req []int64) []int64 {
