@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 func Test_mysqlConnectPool(t *testing.T) {
@@ -33,7 +33,7 @@ func Test_mysqlConnectPool(t *testing.T) {
 func openMaxConn(db *gorm.DB, i int) {
 	var connectionID int
 	var result int
-	err := db.DB().QueryRow("SELECT CONNECTION_ID()").Scan(&connectionID) // 查询连接句柄ID
+	err := db.Raw("SELECT CONNECTION_ID()").Scan(&connectionID).Error // 查询连接句柄ID
 	if err != nil {
 		fmt.Println("query connectionID failed", err.Error())
 		return
@@ -41,7 +41,7 @@ func openMaxConn(db *gorm.DB, i int) {
 
 	fmt.Println("worker:", i, "connectionID:", connectionID)
 
-	err = db.DB().QueryRow("SELECT sleep(10)").Scan(&result) // 连接句柄休眠
+	err = db.Raw("SELECT sleep(10)").Scan(&result).Error // 连接句柄休眠
 	if err != nil {
 		fmt.Println("query sleep connectionID failed", err.Error())
 		return
@@ -68,7 +68,7 @@ worker: 6 connectionID: 110378
 func idleConn(db *gorm.DB) {
 	var connectionID int
 
-	err := db.DB().QueryRow("SELECT CONNECTION_ID()").Scan(&connectionID) // 查询连接句柄ID
+	err := db.Raw("SELECT CONNECTION_ID()").Scan(&connectionID).Error // 查询连接句柄ID
 	if err != nil {
 		fmt.Println("query connectionID failed", err.Error())
 		return
