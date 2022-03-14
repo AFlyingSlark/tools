@@ -32,3 +32,19 @@ func MapToStructByJson(source map[string]interface{}, target interface{}) (inter
 
 	return target, nil
 }
+
+// slice去重
+func SliceRemoveDuplicate(arr []interface{}) []interface{} {
+	temp := make(map[interface{}]struct{}, len(arr)) // len避免扩容,struct节省空间
+	k := 0
+
+	for _, value := range arr { // 0(n)
+		if _, ok := temp[value]; !ok {
+			temp[value] = struct{}{}
+			arr[k] = value // 记录非重复k,值前移,原地去重 0(n)
+			k++
+		}
+	}
+
+	return arr[:k]
+}
