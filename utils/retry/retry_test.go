@@ -3,6 +3,7 @@ package retry
 import (
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -14,9 +15,11 @@ import (
 
 var logger *zap.Logger
 
-func TestMain(t *testing.T) {
+func TestMain(m *testing.M) {
 	cfg := slog.Conf{}.DefaultConf()
 	logger = slog.NewLogger(&cfg, `test`)
+
+	os.Exit(m.Run())
 }
 
 func TestQuickRetry(t *testing.T) {

@@ -1,6 +1,9 @@
 package pool
 
 import (
+	"log"
+	"time"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -10,13 +13,31 @@ import (
 // gorm底层是根据sql.DB实现的，而sql.DB里面提供了相关的配置函数.执行sql语句才会使用连接池句柄
 
 // InitMysqlPool 初始化MySQL连接池
-func InitMysqlPool(dataSource string) *gorm.DB {
+func InitMysqlPool(slog *log.Logger, dataSource string) *gorm.DB {
 	var err error
+	var newLogger logger.Interface
+
+	if slog == nil {
+		// 无日志器则使用gorm默认日志器,info打印级别
+		newLogger = logger.Default.LogMode(logger.Info)
+	} else {
+		// 使用自定义日志器
+		newLogger = logger.New(
+			slog, // 实现io.Writer
+			logger.Config{
+				SlowThreshold:             200 * time.Millisecond,
+				LogLevel:                  logger.Info,
+				IgnoreRecordNotFoundError: false,
+				Colorful:                  true,
+			},
+		)
+	}
+
 	DB, err := gorm.Open(mysql.Open(dataSource), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, // 设置表相关的名称为单数
 		},
-		Logger: logger.Default.LogMode(logger.Info), // 使用默认日志打印级别
+		Logger: newLogger,
 	})
 	if err != nil {
 		panic(err)

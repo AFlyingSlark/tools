@@ -6,11 +6,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-toolkit/slog"
 	"gorm.io/gorm"
 )
 
 func Test_mysqlConnectPool(t *testing.T) {
-	db := InitMysqlPool("root:123456@tcp(localhost:3306)/test?charset=utf8&parseTime=true")
+	stdLogger := slog.StdLogger(testLogger) // 已实现io.Writer,用于log写入自定义日志器中
+	db := InitMysqlPool(stdLogger, "root:123456@tcp(localhost:3306)/test?charset=utf8&parseTime=true&loc=Local")
 	var wg sync.WaitGroup
 	num := 15 // 大于最大连接数
 	wg.Add(num)

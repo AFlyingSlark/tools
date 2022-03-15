@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -131,12 +132,16 @@ func Flush() error {
 func StdLogger(logger *zap.Logger) *log.Logger {
 	logCh := make(chan string, 100)
 
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func() {
+		wg.Done()
 		for {
 			logStr := <-logCh
 			logger.Info(logStr[:len(logStr)-1])
 		}
 	}()
+	wg.Wait()
 
 	return log.New(&Writer{
 		LogCh: logCh,
