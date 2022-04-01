@@ -48,3 +48,15 @@ func SliceRemoveDuplicate(arr []interface{}) []interface{} {
 
 	return arr[:k]
 }
+
+// 移除slice中特定的元素
+func RemoveSpecificBySlice(arr []interface{}, param interface{}) []interface{} {
+	for i := 0; i < len(arr); i++ {
+		if arr[i] == param {
+			arr = append(arr[:i], arr[i+1:]...) // 无内存分配.提高性能
+			i--                                 // 保持正确的索引
+		}
+	}
+
+	return arr
+}
