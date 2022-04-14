@@ -5,7 +5,7 @@ import (
 )
 
 // 指针是否为空
-func IsPointerNil(data interface{}) bool {
+func IsPointerNil(data any) bool {
 	if data == nil {
 		return true
 	}
