@@ -21,21 +21,3 @@ func Test_xxx(t *testing.T) {
 
 	fmt.Println(result)
 }
-
-func Test_SliceRemoveDuplicate(t *testing.T) {
-	s := []interface{}{"1", "1", "3", "5", "3"}
-
-	result := SliceRemoveDuplicate(s)
-
-	fmt.Println(result)
-}
-
-func Test_RemoveSpecificBySlice(t *testing.T) {
-	s := []interface{}{"1", "1", "3", "5", "3"}
-
-	var param interface{} = "1"
-
-	result := RemoveSpecificBySlice(s, param)
-
-	fmt.Println(result)
-}
