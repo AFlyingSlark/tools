@@ -143,3 +143,20 @@ func DiffNano(startTime time.Time) (diff int64) {
 	diff = int64(time.Since(startTime))
 	return
 }
+
+// 指定时间的几个小时前/后 (如一小时前:-1,一小时后:1)
+func AddHourTime(t time.Time, d int) time.Time {
+	day := time.Duration(d * int(time.Hour))
+	return t.Add(day)
+}
+
+// 指定时间的几天前/后 (如昨天:-1,明天:1)
+func AddDay(t time.Time, d int) time.Time {
+	return t.AddDate(0, 0, d)
+}
+
+// 指定时间的几周前/后 (如上周:-1,下周:1)
+func AddWeek(t time.Time, w int) time.Time {
+	week := time.Duration(w * int(time.Hour) * 24 * 7)
+	return t.Add(week)
+}
