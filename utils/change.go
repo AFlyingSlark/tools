@@ -32,3 +32,23 @@ func MapToStructByJson(source map[string]any, target any) (any, error) {
 
 	return target, nil
 }
+
+// slice交集
+func SliceIntersection[T int64 | string](first []T, last []T) []T {
+	result := make([]T, 0)
+	temp := make(map[T]struct{})
+
+	for _, value := range first {
+		if _, ok := temp[value]; !ok {
+			temp[value] = struct{}{}
+		}
+	}
+
+	for _, val := range last {
+		if _, ok := temp[val]; ok {
+			result = append(result, val)
+		}
+	}
+
+	return result
+}

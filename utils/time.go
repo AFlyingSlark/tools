@@ -160,3 +160,8 @@ func AddWeek(t time.Time, w int) time.Time {
 	week := time.Duration(w * int(time.Hour) * 24 * 7)
 	return t.Add(week)
 }
+
+// 指定时间的几月前/后 (如上月:-1,下月:1)
+func AddMonth(t time.Time, m int) time.Time {
+	return t.AddDate(0, m, 0)
+}
