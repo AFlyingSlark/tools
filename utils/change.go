@@ -6,8 +6,12 @@ import (
 	"errors"
 )
 
+type BoolToResultType interface {
+	int | int64 | string | []int64 | []string | func()
+}
+
 // 根据judge的值返回结果,true:ok false:fail
-func BoolToResult(judge bool, ok, fail any) any {
+func BoolToResult[T BoolToResultType](judge bool, ok, fail T) T {
 	if !judge {
 		return fail
 	}
