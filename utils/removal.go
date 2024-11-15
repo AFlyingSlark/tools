@@ -7,12 +7,12 @@ type SliceConstraint interface {
 type R[T SliceConstraint] []T
 
 // slice去除重复数据
-func RemoveRespSlice[S SliceConstraint](req []S) []S {
+func SliceDistinct[S SliceConstraint](req []S) []S {
 	if len(req) == 0 {
 		return nil
 	}
-	result := make(R[S], 0)
-	temp := map[S]struct{}{}
+	result := make(R[S], 0, len(req))
+	temp := make(map[S]struct{})
 
 	for _, val := range req {
 		if _, ok := temp[val]; !ok {
@@ -41,7 +41,7 @@ func SliceRemoveDuplicate[S SliceConstraint](arr R[S]) R[S] {
 }
 
 // 移除slice中特定的元素
-func RemoveSpecificBySlice[S SliceConstraint](arr R[S], param S) R[S] {
+func SliceRemoveSpecific[S SliceConstraint](arr R[S], param S) R[S] {
 	for i := 0; i < len(arr); i++ {
 		if arr[i] == param {
 			arr = append(arr[:i], arr[i+1:]...) // 无内存分配.提高性能

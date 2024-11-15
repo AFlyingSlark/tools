@@ -9,7 +9,7 @@ func Test_RemoveSlice(t *testing.T) {
 	req := []int64{1, 2, 3, 4, 5, 4, 3, 2, 1}
 	//req := []string{"1", "2", "3", "4", "5", "4", "3", "2", "1"}
 
-	result := RemoveRespSlice(req)
+	result := SliceDistinct(req)
 
 	t.Log(result)
 }
@@ -27,7 +27,7 @@ func Test_RemoveSpecificBySlice(t *testing.T) {
 
 	var param string = "1"
 
-	result := RemoveSpecificBySlice(s, param)
+	result := SliceRemoveSpecific(s, param)
 
 	fmt.Println(result)
 }
