@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -47,12 +48,15 @@ func main() {
 
 	// 3. 渲染模板并写入文件
 	for _, value := range config.Conf {
-		outputToFile(tmpl, value, config.OutputDir)
+		if err := outputToFile(tmpl, value, config.OutputDir); err != nil {
+			log.Fatalf("渲染模板失败: %v", err)
+			return
+		}
 	}
 }
 
 // 渲染输出文件
-func outputToFile(tmpl *template.Template, value confData, outputDir string) {
+func outputToFile(tmpl *template.Template, value confData, outputDir string) error {
 	var (
 		// 构建文件名
 		tplName    = strings.Join([]string{value.FileName, `tpl`}, `.`)
@@ -62,17 +66,13 @@ func outputToFile(tmpl *template.Template, value confData, outputDir string) {
 	// 确保目录存在（如果不存在则创建）
 	err := os.MkdirAll(outputDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("创建目录失败: %v", err)
-
-		return
+		return fmt.Errorf("创建目录失败: %w", err)
 	}
 
 	// 在目录下:创建新文件,如果文件已存在,会清空原文件（注意数据覆盖）
 	outFile, err := os.Create(filepath.Join(outputDir, targetFile))
 	if err != nil {
-		log.Fatalf("创建输出文件失败: %v", err)
-
-		return
+		return fmt.Errorf("创建输出文件失败: %w", err)
 	}
 
 	defer func() {
@@ -82,11 +82,12 @@ func outputToFile(tmpl *template.Template, value confData, outputDir string) {
 	// fmt.Println(value.TplData) // 注意json配置中的模版字段大小写要一致.这个值解析的类型为map[string]interface{}
 
 	if err = tmpl.ExecuteTemplate(outFile, tplName, value.TplData); err != nil {
-		log.Fatalf("模板渲染失败: %v", err)
-		return
+		return fmt.Errorf("模板渲染失败: %w", err)
 	}
 
 	log.Println(targetFile, "渲染处理完成,结果已写入")
+
+	return nil
 }
 
 // 读取 JSON 配置文件
