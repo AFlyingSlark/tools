@@ -16,17 +16,18 @@ var (
 
 // 定义配置结构体，字段名必须与 JSON 匹配
 type Config struct {
-	Conf      []confData `json:"conf"`
 	Templates string     `json:"templates"`
 	OutputDir string     `json:"outputDir"`
+	Conf      []confData `json:"conf"`
 }
 
 // 渲染文件名及渲染信息any(模版中需要渲染的字段名需一致.类型会解析为map)
 type confData struct {
-	FileName string `json:"fileName"`
 	TplData  any    `json:"tplData"`
+	FileName string `json:"fileName"`
 }
 
+// go run main.go
 // make local
 // chmod +x binaryMain
 func main() {
@@ -78,7 +79,7 @@ func outputToFile(tmpl *template.Template, value confData, outputDir string) {
 		_ = outFile.Close()
 	}()
 
-	//fmt.Println(value.TplData) // 注意json配置中的模版字段大小写要一致.这个值解析的类型为map[string]interface{}
+	// fmt.Println(value.TplData) // 注意json配置中的模版字段大小写要一致.这个值解析的类型为map[string]interface{}
 
 	if err = tmpl.ExecuteTemplate(outFile, tplName, value.TplData); err != nil {
 		log.Fatalf("模板渲染失败: %v", err)
