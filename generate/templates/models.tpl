@@ -2,6 +2,6 @@ package main
 
 /*
 
-标题: {{.StructName}}
+标题: {{.structName}}
 
 */

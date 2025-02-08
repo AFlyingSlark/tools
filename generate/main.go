@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -17,17 +18,13 @@ var (
 type Config struct {
 	Conf      []confData `json:"conf"`
 	Templates string     `json:"templates"`
+	OutputDir string     `json:"outputDir"`
 }
 
-// 渲染文件名及渲染信息
+// 渲染文件名及渲染信息any(模版中需要渲染的字段名需一致.类型会解析为map)
 type confData struct {
-	FileName string  `json:"fileName"`
-	TplData  tplData `json:"tplData"`
-}
-
-// 模版中需要渲染的字段
-type tplData struct {
-	StructName string `json:"structName"`
+	FileName string `json:"fileName"`
+	TplData  any    `json:"tplData"`
 }
 
 // make local
@@ -49,19 +46,28 @@ func main() {
 
 	// 3. 渲染模板并写入文件
 	for _, value := range config.Conf {
-		outputToFile(tmpl, value)
+		outputToFile(tmpl, value, config.OutputDir)
 	}
 }
 
 // 渲染输出文件
-func outputToFile(tmpl *template.Template, value confData) {
+func outputToFile(tmpl *template.Template, value confData, outputDir string) {
 	var (
 		// 构建文件名
 		tplName    = strings.Join([]string{value.FileName, `tpl`}, `.`)
 		targetFile = strings.Join([]string{value.FileName, `go`}, `.`)
 	)
 
-	outFile, err := os.Create(targetFile)
+	// 确保目录存在（如果不存在则创建）
+	err := os.MkdirAll(outputDir, os.ModePerm)
+	if err != nil {
+		log.Fatalf("创建目录失败: %v", err)
+
+		return
+	}
+
+	// 在目录下:创建新文件,如果文件已存在,会清空原文件（注意数据覆盖）
+	outFile, err := os.Create(filepath.Join(outputDir, targetFile))
 	if err != nil {
 		log.Fatalf("创建输出文件失败: %v", err)
 
@@ -71,6 +77,8 @@ func outputToFile(tmpl *template.Template, value confData) {
 	defer func() {
 		_ = outFile.Close()
 	}()
+
+	//fmt.Println(value.TplData) // 注意json配置中的模版字段大小写要一致.这个值解析的类型为map[string]interface{}
 
 	if err = tmpl.ExecuteTemplate(outFile, tplName, value.TplData); err != nil {
 		log.Fatalf("模板渲染失败: %v", err)
